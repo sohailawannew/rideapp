@@ -1,9 +1,8 @@
 {
   "name": "RideApp",
   "short_name": "Ride",
-  "description": "Book rides easily",  // Fixes "description" error
-  "id": "/rideapp/",                   // Fixes "id" error
-  "start_url": "/rideapp/",
+  "description": "Book rides easily",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
@@ -13,8 +12,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "launch_handler": {                  // Fixes "launch_handler" error
-    "client_mode": "auto"
-  }
+  ]
 }
