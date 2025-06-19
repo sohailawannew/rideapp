@@ -1,122 +1,75 @@
-// Service Worker for RideApp - Optimized v3.0
-const CACHE_NAME = 'rideapp-v3.0';
+// Service Worker - RideApp v3.1
+const CACHE_NAME = 'rideapp-v3.1';
 const ASSETS = [
-  // Core App Shell
+  // Core Files
   '/rideapp/',
   '/rideapp/index.html',
   '/rideapp/manifest.json',
   '/rideapp/offline.html',
-
-  // Essential Assets (Update these paths!)
+  
+  // Icons
   '/rideapp/icon.png',
   '/rideapp/icon-192x192.png',
-  '/rideapp/css/main.min.css',
-  '/rideapp/js/main.min.js',
-  '/rideapp/images/logo.webp',
-  '/rideapp/fonts/roboto-v30-latin-regular.woff2'
+  
+  // Add your other assets below:
+  '/rideapp/css/styles.css',
+  '/rideapp/js/app.js'
 ];
 
-// ===== INSTALL EVENT =====
+// INSTALL - Cache core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[SW] Caching app shell');
-        return cache.addAll(ASSETS).catch(err => {
-          console.warn('[SW] Failed to cache some assets:', err);
-        });
-      })
-      .then(() => {
-        console.log('[SW] Skip waiting activated');
-        return self.skipWaiting();
-      })
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
-// ===== ACTIVATE EVENT =====
+// ACTIVATE - Clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            console.log('[SW] Removing old cache:', cache);
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
-    .then(() => {
-      console.log('[SW] Claiming clients');
-      return self.clients.claim();
-    })
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.map(key => key !== CACHE_NAME && caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-// ===== FETCH STRATEGY =====
+// FETCH - Smart caching strategy
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  
   // Skip non-GET requests
-  if (request.method !== 'GET') return;
+  if (event.request.method !== 'GET') return;
 
-  // Network First for API calls
-  if (request.url.includes('/api/')) {
+  // Handle navigation requests
+  if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then(networkResponse => networkResponse)
-        .catch(() => caches.match('/rideapp/offline.html'))
+      fetch(event.request)
+        .catch(() => caches.match('/rideapp/index.html'))
     );
     return;
   }
 
-  // Cache First with Network Fallback for static assets
-  if (ASSETS.some(asset => request.url.endsWith(asset))) {
-    event.respondWith(
-      caches.match(request)
-        .then(cachedResponse => cachedResponse || fetch(request))
-    );
-    return;
-  }
-
-  // Stale-While-Revalidate for other requests
+  // Cache-first for assets
   event.respondWith(
-    caches.match(request)
-      .then(cachedResponse => {
-        const fetchPromise = fetch(request)
-          .then(networkResponse => {
-            // Update cache
-            caches.open(CACHE_NAME)
-              .then(cache => cache.put(request, networkResponse.clone()));
-            return networkResponse;
-          })
-          .catch(() => cachedResponse);
-
-        return cachedResponse || fetchPromise;
-      })
+    caches.match(event.request)
+      .then(cached => cached || fetch(event.request)
       .catch(() => {
-        // Ultimate fallback for navigation requests
-        if (request.mode === 'navigate') {
-          return caches.match('/rideapp/index.html');
+        if (event.request.destination === 'image') {
+          return caches.match('/rideapp/icon.png');
         }
         return caches.match('/rideapp/offline.html');
       })
   );
 });
 
-// ===== BACKGROUND SYNC =====
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-rides') {
-    event.waitUntil(handleBackgroundSync());
-  }
-});
-
-// ===== PUSH NOTIFICATIONS =====
+// PUSH NOTIFICATIONS
 self.addEventListener('push', (event) => {
   const payload = event.data?.json() || {
-    title: 'New Update',
-    body: 'There are new rides available!',
-    icon: '/rideapp/icon-192x192.png'
+    title: 'New Ride Available',
+    body: 'Tap to view details',
+    icon: '/rideapp/icon-192x192.png',
+    data: { url: '/rideapp/' }
   };
 
   event.waitUntil(
@@ -124,13 +77,19 @@ self.addEventListener('push', (event) => {
       body: payload.body,
       icon: payload.icon,
       badge: '/rideapp/icon-192x192.png',
-      vibrate: [200, 100, 200]
+      actions: [
+        { action: 'view', title: 'View' },
+        { action: 'dismiss', title: 'Dismiss' }
+      ],
+      data: payload.data
     })
   );
 });
 
-// Helper Functions
-async function handleBackgroundSync() {
-  // Implement your background sync logic here
-  console.log('[SW] Background sync processing');
-}
+// NOTIFICATION CLICKS
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  if (event.action === 'view') {
+    clients.openWindow(event.notification.data.url);
+  }
+});
