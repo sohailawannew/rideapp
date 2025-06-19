@@ -1,102 +1,136 @@
-// Service Worker for RideApp (Complete Version)
-const CACHE_NAME = 'rideapp-v2.0';
+// Service Worker for RideApp - Optimized v3.0
+const CACHE_NAME = 'rideapp-v3.0';
 const ASSETS = [
-  // Core App Files
+  // Core App Shell
   '/rideapp/',
   '/rideapp/index.html',
   '/rideapp/manifest.json',
-  
-  // Static Assets
+  '/rideapp/offline.html',
+
+  // Essential Assets (Update these paths!)
   '/rideapp/icon-512x512.png',
-  
-  // CSS (add your actual files)
-  '/rideapp/css/styles.css',
-  
-  // JavaScript (add your actual files)
-  '/rideapp/js/app.js',
-  
-  // Images (add your actual files)
-  '/rideapp/images/logo.png',
-  
-  // Fonts (add your actual files)
-  '/rideapp/fonts/roboto.regular.woff2',
-  
-  // Fallback Page
-  '/rideapp/offline.html'
+  '/rideapp/icon-192x192.png',
+  '/rideapp/css/main.min.css',
+  '/rideapp/js/main.min.js',
+  '/rideapp/images/logo.webp',
+  '/rideapp/fonts/roboto-v30-latin-regular.woff2'
 ];
 
 // ===== INSTALL EVENT =====
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Caching app shell');
-        return cache.addAll(ASSETS);
+      .then(cache => {
+        console.log('[SW] Caching app shell');
+        return cache.addAll(ASSETS).catch(err => {
+          console.warn('[SW] Failed to cache some assets:', err);
+        });
       })
-      .then(() => self.skipWaiting())
+      .then(() => {
+        console.log('[SW] Skip waiting activated');
+        return self.skipWaiting();
+      })
   );
 });
 
 // ===== ACTIVATE EVENT =====
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map((cache) => {
+        cacheNames.map(cache => {
           if (cache !== CACHE_NAME) {
-            console.log('Deleting old cache:', cache);
+            console.log('[SW] Removing old cache:', cache);
             return caches.delete(cache);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
+    .then(() => {
+      console.log('[SW] Claiming clients');
+      return self.clients.claim();
+    })
   );
 });
 
-// ===== FETCH EVENT =====
+// ===== FETCH STRATEGY =====
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  
   // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
+  if (request.method !== 'GET') return;
 
-  // Handle API requests differently
-  if (event.request.url.includes('/api/')) {
+  // Network First for API calls
+  if (request.url.includes('/api/')) {
     event.respondWith(
-      fetch(event.request)
+      fetch(request)
+        .then(networkResponse => networkResponse)
         .catch(() => caches.match('/rideapp/offline.html'))
     );
     return;
   }
 
+  // Cache First with Network Fallback for static assets
+  if (ASSETS.some(asset => request.url.endsWith(asset))) {
+    event.respondWith(
+      caches.match(request)
+        .then(cachedResponse => cachedResponse || fetch(request))
+    );
+    return;
+  }
+
+  // Stale-While-Revalidate for other requests
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // Cache successful responses
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME)
-          .then((cache) => cache.put(event.request, responseClone));
-        return response;
+    caches.match(request)
+      .then(cachedResponse => {
+        const fetchPromise = fetch(request)
+          .then(networkResponse => {
+            // Update cache
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, networkResponse.clone()));
+            return networkResponse;
+          })
+          .catch(() => cachedResponse);
+
+        return cachedResponse || fetchPromise;
       })
       .catch(() => {
-        // Network failed - try cache
-        return caches.match(event.request)
-          .then((cachedResponse) => {
-            // For navigation requests, return index.html if no cache match
-            if (!cachedResponse && event.request.mode === 'navigate') {
-              return caches.match('/rideapp/index.html');
-            }
-            return cachedResponse || caches.match('/rideapp/offline.html');
-          });
+        // Ultimate fallback for navigation requests
+        if (request.mode === 'navigate') {
+          return caches.match('/rideapp/index.html');
+        }
+        return caches.match('/rideapp/offline.html');
       })
   );
 });
 
+// ===== BACKGROUND SYNC =====
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-rides') {
+    event.waitUntil(handleBackgroundSync());
+  }
+});
+
 // ===== PUSH NOTIFICATIONS =====
 self.addEventListener('push', (event) => {
-  const payload = event.data ? event.data.json() : {};
+  const payload = event.data?.json() || {
+    title: 'New Update',
+    body: 'There are new rides available!',
+    icon: '/rideapp/icon-192x192.png'
+  };
+
   event.waitUntil(
-    self.registration.showNotification(payload.title || 'New Notification', {
-      body: payload.body || 'You have new updates',
-      icon: '/rideapp/icon-512x512.png'
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: payload.icon,
+      badge: '/rideapp/icon-192x192.png',
+      vibrate: [200, 100, 200]
     })
   );
 });
+
+// Helper Functions
+async function handleBackgroundSync() {
+  // Implement your background sync logic here
+  console.log('[SW] Background sync processing');
+}
