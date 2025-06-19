@@ -1,0 +1,3146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Ride Booking System</title>
+    <style>
+        :root {
+            --primary: #4e73df;
+            --secondary: #858796;
+            --success: #1cc88a;
+            --info: #36b9cc;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .alert-danger {
+            background-color: #fadbd8;
+            color: var(--danger);
+        }
+
+        .alert-success {
+            background-color: #d5f0e4;
+            color: var(--success);
+        }
+        
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--light);
+            color: var(--primary);
+        }
+        
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1rem;
+            font-weight: bold;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.35rem;
+            padding: 0.5rem 0;
+        }
+        
+        .dropdown-content a {
+            color: var(--dark);
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: var(--light);
+        }
+        
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+        
+        .card-header {
+            border-bottom: 1px solid #e3e6f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        th {
+            font-weight: 600;
+            color: var(--dark);
+            background-color: #f8f9fc;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background-color: #e0e6fd;
+            color: var(--primary);
+        }
+        
+        .badge-success {
+            background-color: #d5f0e4;
+            color: var(--success);
+        }
+        
+        .badge-warning {
+            background-color: #fdf3d8;
+            color: var(--warning);
+        }
+        
+        .badge-danger {
+            background-color: #fadbd8;
+            color: var(--danger);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2e59d9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #17a673;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #be2617;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d3e2;
+            border-radius: 0.35rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -5px;
+            gap: 12px 0;
+        }
+
+        .form-col {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 5px;
+            position: relative;
+        }
+
+        .commission-toggle {
+            display: flex;
+            border: 1px solid #d1d3e2;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .btn-toggle {
+            flex: 1;
+            padding: 8px 12px;
+            background: #f8f9fc;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .btn-toggle.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-toggle:not(.active):hover {
+            background: #e9ecef;
+        }
+
+        #fixedField, #percentageField {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 0.35rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .close {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+        
+        .driver-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .driver-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+        }
+        
+        .driver-info h2 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .driver-info p {
+            color: var(--secondary);
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background-color: white;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .summary-card h3 {
+            font-size: 1rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-card p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .nav-links {
+                margin-top: 1rem;
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .nav-links a {
+                margin: 0.25rem 0;
+                padding: 0.5rem;
+                display: inline-block;
+            }
+            
+            .profile-dropdown {
+                margin-top: 1rem;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .commission-toggle {
+                flex-direction: column;
+            }
+            
+            .btn-toggle {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">Unified Ride Booking System</div>
+            <div id="errorAlert" class="alert alert-danger"></div>
+            <div id="successAlert" class="alert alert-success"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="form-group" style="text-align: right;">
+                    <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Login</button>
+                <button type="button" id="showRegisterForm" class="btn btn-secondary" style="width: 100%;">Register</button>
+            </form>
+
+            <form id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" class="form-control" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" class="form-control" id="regUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" class="form-control" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Phone Number</label>
+                    <input type="tel" class="form-control" id="regPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" class="form-control" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="regConfirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Register as</label>
+                    <select class="form-control" id="regRole" required>
+                        <option value="">Select Role</option>
+                        <option value="driver">Driver</option>
+                        <option value="customer">Customer</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Register</button>
+                <button type="button" id="showLoginForm" class="btn btn-secondary" style="width: 100%;">Back to Login</button>
+            </form>
+
+            <form id="forgotPasswordForm" style="display: none;">
+                <div class="form-group">
+                    <label for="forgotEmail">Email Address</label>
+                    <input type="email" class="form-control" id="forgotEmail" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Reset Password</button>
+                <button type="button" id="backToLogin" class="btn btn-secondary" style="width: 100%;">Back to Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminPortal" style="display: none;">
+        <header>
+            <div class="container">
+                <nav>
+                    <div class="logo">Admin Portal</div>
+                    <div class="nav-links">
+                        <a href="#" class="active" data-tab="dashboard">Dashboard</a>
+                        <a href="#" data-tab="bookings">Bookings</a>
+                        <a href="#" data-tab="drivers">Drivers</a>
+                        <a href="#" data-tab="vehicles">Vehicles</a>
+                        <a href="#" data-tab="accounts">Accounts</a>
+                        <div class="profile-dropdown">
+                            <div class="profile-btn">
+                                <span id="adminName">Admin</span>
+                                <div class="profile-img" id="profileInitial">A</div>
+                            </div>
+                            <div class="dropdown-content">
+                                <a href="#" id="profileLink">Profile</a>
+                                <a href="#" id="logoutLink">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="dashboard" class="tab-content active">
+                <h1>Admin Dashboard</h1>
+                
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Total Bookings</h3>
+                        <p id="totalBookings">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Active Drivers</h3>
+                        <p id="activeDrivers">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Available Vehicles</h3>
+                        <p id="availableVehicles">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Today's Revenue</h3>
+                        <p id="todaysRevenue">0 SAR</p>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="dashboardDateRange">Date Range</label>
+                        <select class="form-control" id="dashboardDateRange">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" id="customDateRangeGroup" style="display: none;">
+                        <label for="dashboardStartDate">Start Date</label>
+                        <input type="date" class="form-control" id="dashboardStartDate">
+                    </div>
+                    <div class="filter-group" id="customDateRangeGroup2" style="display: none;">
+                        <label for="dashboardEndDate">End Date</label>
+                        <input type="date" class="form-control" id="dashboardEndDate">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Bookings</h2>
+                        <button class="btn btn-primary btn-sm" id="createBookingBtn">Create Booking</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Pickup</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBookingsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="bookings" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="bookingStatusFilter">Status</label>
+                        <select class="form-control" id="bookingStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="bookingDateFilter">Date Range</label>
+                        <select class="form-control" id="bookingDateFilter">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="bookingSearch">Search</label>
+                        <input type="text" id="bookingSearch" placeholder="Search bookings..." class="form-control">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Bookings</h2>
+                        <div>
+                            <button class="btn btn-primary btn-sm" id="createBookingBtn2">Create Booking</button>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Pickup</th>
+                                <th>Destination</th>
+                                <th>Driver</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allBookingsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="drivers" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="driverStatusFilter">Status</label>
+                        <select class="form-control" id="driverStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="driverSearch">Search</label>
+                        <input type="text" id="driverSearch" placeholder="Search drivers..." class="form-control">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Drivers</h2>
+                        <button class="btn btn-primary btn-sm" id="addDriverBtn">Add Driver</button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Assigned Vehicle</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driversTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="vehicles" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="vehicleStatusFilter">Status</label>
+                        <select class="form-control" id="vehicleStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="available">Available</option>
+                            <option value="in_use">In Use</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="expired">Registration Expired</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="vehicleTypeFilter">Type</label>
+                        <select class="form-control" id="vehicleTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="4_seater">4 Seater</option>
+                            <option value="7_seater">7 Seater</option>
+                            <option value="sedan">Sedan</option>
+                            <option value="suv">SUV</option>
+                            <option value="van">Van</option>
+                            <option value="luxury">Luxury</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="vehicleSearch">Search</label>
+                        <input type="text" id="vehicleSearch" placeholder="Search vehicles..." class="form-control">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Vehicles</h2>
+                        <button class="btn btn-primary btn-sm" id="addVehicleBtn">Add Vehicle</button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Plate</th>
+                                <th>Type</th>
+                                <th>Seats</th>
+                                <th>Registration Expiry</th>
+                                <th>Status</th>
+                                <th>Assigned Driver</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehiclesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="accounts" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="accountStatusFilter">Status</label>
+                        <select class="form-control" id="accountStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="accountDateFilter">Date Range</label>
+                        <select class="form-control" id="accountDateFilter">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Accounts</h2>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Driver</th>
+                                <th>Period</th>
+                                <th>Total Rides</th>
+                                <th>Total Amount</th>
+                                <th>Commission</th>
+                                <th>Driver Earnings</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="createBookingModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Create New Booking</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="createBookingForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="bookingCustomerName">Customer Name</label>
+                                <input type="text" class="form-control" id="bookingCustomerName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="bookingCustomerPhone">Customer Phone</label>
+                                <input type="tel" class="form-control" id="bookingCustomerPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="bookingCarType">Car Type*</label>
+                                <select class="form-control" id="bookingCarType" required>
+                                    <option value="">Select Car Type</option>
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="van">Van</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookingFrom">From Location*</label>
+                            <input type="text" class="form-control" id="bookingFrom" list="locationSuggestions" required>
+                            <datalist id="locationSuggestions">
+                                <option value="Downtown">
+                                <option value="Airport">
+                                <option value="Hotel District">
+                                <option value="City Center">
+                                <option value="Shopping Mall">
+                            </datalist>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bookingTo">To Location*</label>
+                            <input type="text" class="form-control" id="bookingTo" list="locationSuggestions" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="bookingDate">Date*</label>
+                                    <input type="date" class="form-control" id="bookingDate" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="bookingTime">Time*</label>
+                                    <input type="time" class="form-control" id="bookingTime" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="bookingFare">Fare (SAR)*</label>
+                                    <input type="number" class="form-control" id="bookingFare" min="10" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label>Commission Type*</label>
+                                    <div class="commission-toggle">
+                                        <button type="button" class="btn-toggle active" data-type="percentage">Percentage</button>
+                                        <button type="button" class="btn-toggle" data-type="fixed">Fixed Amount</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" id="percentageField">
+                                    <label for="bookingCommissionPercent">Commission (%)</label>
+                                    <select class="form-control" id="bookingCommissionPercent">
+                                        <option value="10">10%</option>
+                                        <option value="15">15%</option>
+                                        <option value="20" selected>20%</option>
+                                        <option value="25">25%</option>
+                                        <option value="30">30%</option>
+                                        <option value="35">35%</option>
+                                        <option value="40">40%</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group" id="fixedField" style="display:none">
+                                    <label for="bookingCommissionFixed">Fixed Amount (SAR)</label>
+                                    <input type="number" class="form-control" id="bookingCommissionFixed" min="0" step="1" placeholder="e.g. 50">
+                                </div>
+                                
+                                <input type="hidden" id="bookingCommission" name="commission">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Create Booking</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="addDriverModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add New Driver</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="addDriverForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverName">Full Name</label>
+                                <input type="text" class="form-control" id="driverName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverPhone">Phone Number</label>
+                                <input type="tel" class="form-control" id="driverPhone" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverUsername">Username</label>
+                                <input type="text" class="form-control" id="driverUsername" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverPassword">Password</label>
+                                <input type="password" class="form-control" id="driverPassword" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverEmail">Email</label>
+                                <input type="email" class="form-control" id="driverEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverStatus">Status</label>
+                                <select class="form-control" id="driverStatus" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverPlate">Plate Number</label>
+                                <input type="text" class="form-control" id="driverPlate" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="driverCarType">Car Type</label>
+                                <select class="form-control" id="driverCarType" required>
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="van">Van</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Add Driver</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="viewDriverModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Driver Details</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="viewDriverContent"></div>
+            </div>
+        </div>
+
+        <div class="modal" id="viewVehicleModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Vehicle Details</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="viewVehicleContent"></div>
+            </div>
+        </div>
+
+        <div class="modal" id="addVehicleModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add New Vehicle</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="addVehicleForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleMake">Make*</label>
+                                <input type="text" class="form-control" id="vehicleMake" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleModel">Model*</label>
+                                <input type="text" class="form-control" id="vehicleModel" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleYear">Year*</label>
+                                <input type="number" class="form-control" id="vehicleYear" min="2000" max="2025" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehiclePlate">Plate Number*</label>
+                                <input type="text" class="form-control" id="vehiclePlate" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleType">Vehicle Type*</label>
+                                <select class="form-control" id="vehicleType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="van">Van</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleSeats">Seating Capacity*</label>
+                                <select class="form-control" id="vehicleSeats" required>
+                                    <option value="">Select Seats</option>
+                                    <option value="4">4 Seater</option>
+                                    <option value="7">7 Seater</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleRegExpiry">Registration Expiry*</label>
+                                <input type="date" class="form-control" id="vehicleRegExpiry" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="vehicleStatus">Status*</label>
+                                <select class="form-control" id="vehicleStatus" required>
+                                    <option value="available">Available</option>
+                                    <option value="in_use">In Use</option>
+                                    <option value="maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vehicleDriver">Assign Driver (Optional)</label>
+                        <select class="form-control" id="vehicleDriver">
+                            <option value="">None</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="assignBookingModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Assign Booking</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="assignBookingContent">
+                    <div class="form-group">
+                        <label for="assignDriver">Select Driver*</label>
+                        <select class="form-control" id="assignDriver" required>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignVehicle">Select Vehicle*</label>
+                        <select class="form-control" id="assignVehicle" required>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="confirmAssignBtn" class="btn btn-primary">Assign Booking</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="adminProfileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Admin Profile</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="adminProfileForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfileName">Full Name</label>
+                                <input type="text" class="form-control" id="adminProfileName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfileEmail">Email</label>
+                                <input type="email" class="form-control" id="adminProfileEmail" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfilePhone">Phone Number</label>
+                                <input type="tel" class="form-control" id="adminProfilePhone" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfileUsername">Username</label>
+                                <input type="text" class="form-control" id="adminProfileUsername" required readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminProfileCurrentPassword">Current Password (leave blank to keep unchanged)</label>
+                        <input type="password" class="form-control" id="adminProfileCurrentPassword">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfileNewPassword">New Password</label>
+                                <input type="password" class="form-control" id="adminProfileNewPassword">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="adminProfileConfirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="adminProfileConfirmPassword">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="driverPortal" style="display: none;">
+        <header>
+            <div class="container">
+                <nav>
+                    <div class="logo">Driver Portal</div>
+                    <div class="nav-links">
+                        <a href="#" class="active" data-tab="driverDashboard">Dashboard</a>
+                        <a href="#" data-tab="driverBookings">My Bookings</a>
+                        <a href="#" data-tab="driverEarnings">Earnings</a>
+                        <a href="#" data-tab="driverProfile">Profile</a>
+                        <a href="#" id="driverLogoutBtn">Logout</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="driverDashboard" class="tab-content active">
+                <div class="driver-profile">
+                    <div class="driver-avatar" id="driverAvatar">JD</div>
+                    <div class="driver-info">
+                        <h2 id="driverName">John Doe</h2>
+                        <p id="driverDetails">4 Seater • ABC123 • +1 234 567 890</p>
+                    </div>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Today's Bookings</h3>
+                        <p id="todayBookings">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Completed</h3>
+                        <p id="completedBookings">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Earnings</h3>
+                        <p id="totalEarnings">0 SAR</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Commission</h3>
+                        <p id="totalCommission">0 SAR</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Upcoming Bookings</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Time</th>
+                                <th>Fare</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcomingBookingsTable"></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ongoing Booking</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Pickup Time</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ongoingBookingTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="driverBookings" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="driverBookingStatusFilter">Status</label>
+                        <select class="form-control" id="driverBookingStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="driverBookingDateFilter">Date Range</label>
+                        <select class="form-control" id="driverBookingDateFilter">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">My Bookings</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driverBookingsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="driverEarnings" class="tab-content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="driverEarningStatusFilter">Status</label>
+                        <select class="form-control" id="driverEarningStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="driverEarningDateFilter">Date Range</label>
+                        <select class="form-control" id="driverEarningDateFilter">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">My Earnings</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Commission</th>
+                                <th>Net</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driverEarningsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="driverProfile" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">My Profile</div>
+                    </div>
+                    <form id="driverProfileForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" id="driverProfileName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" class="form-control" id="driverProfilePhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Plate Number</label>
+                            <input type="text" class="form-control" id="driverProfilePlate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Password (leave blank to keep unchanged)</label>
+                            <input type="password" class="form-control" id="driverProfileCurrentPassword">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" class="form-control" id="driverProfileNewPassword">
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" class="form-control" id="driverProfileConfirmPassword">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="driverBookingDetailsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Booking Details</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="driverBookingDetailsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="bookingDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Booking Details</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div id="bookingDetailsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const db = {
+            users: [
+                { 
+                    id: 1, 
+                    username: 'admin', 
+                    password: 'admin123', 
+                    role: 'admin', 
+                    name: 'Admin User',
+                    email: 'admin@ridebooking.com',
+                    phone: '+1234567890'
+                },
+                { 
+                    id: 2, 
+                    username: 'driver1', 
+                    password: 'driver123', 
+                    role: 'driver', 
+                    name: 'John Driver',
+                    phone: '+1987654321',
+                    plate_number: 'ABC123',
+                    car_type: 'Sedan',
+                    status: 'active'
+                },
+                { 
+                    id: 3, 
+                    username: 'driver2', 
+                    password: 'driver123', 
+                    role: 'driver', 
+                    name: 'Sarah Smith',
+                    phone: '+1654321987',
+                    plate_number: 'DEF456',
+                    car_type: 'SUV',
+                    status: 'active'
+                }
+            ],
+            vehicles: [
+                {
+                    id: 1,
+                    make: 'Toyota',
+                    model: 'Camry',
+                    year: 2022,
+                    plate: 'ABC123',
+                    type: 'Sedan',
+                    seats: 4,
+                    reg_expiry: '2024-12-31',
+                    status: 'available',
+                    driver_id: 2
+                },
+                {
+                    id: 2,
+                    make: 'Honda',
+                    model: 'CR-V',
+                    year: 2021,
+                    plate: 'DEF456',
+                    type: 'SUV',
+                    seats: 7,
+                    reg_expiry: '2023-12-31',
+                    status: 'available',
+                    driver_id: 3
+                },
+                {
+                    id: 3,
+                    make: 'Mercedes',
+                    model: 'E-Class',
+                    year: 2023,
+                    plate: 'GHI789',
+                    type: 'Luxury',
+                    seats: 4,
+                    reg_expiry: '2025-06-30',
+                    status: 'available'
+                },
+            ],
+            bookings: [
+                {
+                    id: 1,
+                    booking_id: 'BK0001',
+                    customer_name: 'Alice Johnson',
+                    customer_phone: '+1555123456',
+                    from_location: 'Downtown',
+                    to_location: 'Airport',
+                    scheduled_date: getToday(),
+                    scheduled_time: '10:00',
+                    fare: 45.00,
+                    commission: 9.00,
+                    status: 'assigned',
+                    driver_id: 2,
+                    vehicle_id: 1,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    booking_id: 'BK0002',
+                    customer_name: 'Bob Smith',
+                    customer_phone: '+1555987654',
+                    from_location: 'Airport',
+                    to_location: 'Hotel District',
+                    scheduled_date: getToday(),
+                    scheduled_time: '14:30',
+                    fare: 35.00,
+                    commission: 7.00,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 3,
+                    booking_id: 'BK0003',
+                    customer_name: 'Charlie Brown',
+                    customer_phone: '+1555112233',
+                    from_location: 'City Center',
+                    to_location: 'Shopping Mall',
+                    scheduled_date: getToday(),
+                    scheduled_time: '16:00',
+                    fare: 25.00,
+                    commission: 5.00,
+                    status: 'in_progress',
+                    driver_id: 3,
+                    vehicle_id: 2,
+                    pickup_time: new Date().toISOString(),
+                    created_at: new Date().toISOString()
+                }
+            ],
+            earnings: [
+                {
+                    id: 1,
+                    driver_id: 2,
+                    booking_id: 1,
+                    amount: 45.00,
+                    commission: 9.00,
+                    net_amount: 36.00,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                }
+            ]
+        };
+
+        let currentUser = null;
+
+        function getToday() {
+            const today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        function formatCurrency(amount) {
+            return amount.toFixed(2) + ' SAR';
+        }
+
+        function getStatusBadge(status) {
+            switch(status) {
+                case 'pending': return '<span class="badge badge-warning">Pending</span>';
+                case 'assigned': return '<span class="badge badge-primary">Assigned</span>';
+                case 'in_progress': return '<span class="badge badge-info">In Progress</span>';
+                case 'completed': return '<span class="badge badge-success">Completed</span>';
+                case 'cancelled': return '<span class="badge badge-danger">Cancelled</span>';
+                case 'active': return '<span class="badge badge-success">Active</span>';
+                case 'inactive': return '<span class="badge badge-secondary">Inactive</span>';
+                case 'suspended': return '<span class="badge badge-danger">Suspended</span>';
+                case 'available': return '<span class="badge badge-success">Available</span>';
+                case 'in_use': return '<span class="badge badge-primary">In Use</span>';
+                case 'maintenance': return '<span class="badge badge-warning">Maintenance</span>';
+                case 'expired': return '<span class="badge badge-danger">Registration Expired</span>';
+                case 'paid': return '<span class="badge badge-success">Paid</span>';
+                default: return '<span class="badge badge-secondary">' + status + '</span>';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            console.log("Login attempt:", username, password);
+            const errorAlert = document.getElementById('errorAlert');
+            
+            errorAlert.style.display = 'none';
+            errorAlert.textContent = '';
+            
+            const user = db.users.find(u => 
+                u.username.toLowerCase() === username.toLowerCase() && 
+                u.password === password
+            );
+            
+            if (user) {
+                if (user.role === 'driver' && user.status !== 'active') {
+                    showError('Your account is pending admin approval');
+                    return;
+                }
+                
+                currentUser = user;
+                document.getElementById('loginPage').style.display = 'none';
+                
+                if (user.role === 'admin') {
+                    document.getElementById('adminPortal').style.display = 'block';
+                    initAdminPortal();
+                } else {
+                    document.getElementById('driverPortal').style.display = 'block';
+                    initDriverPortal();
+                }
+            } else {
+                showError('Invalid username or password');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('regName').value.trim(),
+                username: document.getElementById('regUsername').value.trim().toLowerCase(),
+                email: document.getElementById('regEmail').value.trim().toLowerCase(),
+                phone: document.getElementById('regPhone').value.trim(),
+                password: document.getElementById('regPassword').value,
+                confirmPassword: document.getElementById('regConfirmPassword').value,
+                role: document.getElementById('regRole').value
+            };
+            
+            if (formData.password !== formData.confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            if (db.users.some(u => u.username.toLowerCase() === formData.username)) {
+                showError('Username already exists');
+                return;
+            }
+            
+            if (db.users.some(u => u.email.toLowerCase() === formData.email)) {
+                showError('Email already exists');
+                return;
+            }
+            
+            const newUser = {
+                id: db.users.length + 1,
+                ...formData,
+                status: formData.role === 'driver' ? 'pending' : 'active',
+                plate_number: formData.role === 'driver' ? '' : undefined,
+                car_type: formData.role === 'driver' ? '' : undefined
+            };
+            
+            db.users.push(newUser);
+            showSuccess(formData.role === 'driver' 
+                ? 'Driver registration submitted for approval' 
+                : 'Account created successfully!');
+            
+            showLoginForm();
+        });
+
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            
+            if (db.users.some(u => u.email.toLowerCase() === email)) {
+                showSuccess('Password reset link sent to your email');
+                showLoginForm();
+            } else {
+                showError('Email not found');
+            }
+        });
+
+        document.getElementById('showRegisterForm').addEventListener('click', showRegisterForm);
+        document.getElementById('showLoginForm').addEventListener('click', showLoginForm);
+        document.getElementById('forgotPasswordLink').addEventListener('click', showForgotPasswordForm);
+        document.getElementById('backToLogin').addEventListener('click', showLoginForm);
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+            document.getElementById('registerForm').reset();
+        }
+
+        function showForgotPasswordForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'block';
+            document.getElementById('forgotPasswordForm').reset();
+        }
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.textContent = message;
+            errorAlert.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const successAlert = document.getElementById('successAlert');
+            successAlert.textContent = message;
+            successAlert.style.display = 'block';
+        }
+
+        function checkForNewDrivers() {
+            if (currentUser && currentUser.role === 'admin') {
+                loadAdminDrivers();
+            }
+        }
+
+        setInterval(checkForNewDrivers, 5000);
+
+        function initAdminPortal() {
+            document.getElementById('adminName').textContent = currentUser.name;
+            document.getElementById('profileInitial').textContent = currentUser.name.charAt(0);
+            
+            setupTabs('adminPortal');
+            
+            loadAdminDashboard();
+            loadAdminBookings();
+            loadAdminDrivers();
+            loadAdminVehicles();
+            loadAdminAccounts();
+            
+            document.getElementById('logoutLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+
+            document.getElementById('profileLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showAdminProfile();
+            });
+
+            document.getElementById('createBookingBtn').addEventListener('click', function() {
+                showCreateBookingModal();
+            });
+
+            document.getElementById('createBookingBtn2').addEventListener('click', function() {
+                showCreateBookingModal();
+            });
+
+            document.getElementById('addDriverBtn').addEventListener('click', function() {
+                showAddDriverModal();
+            });
+
+            document.getElementById('addVehicleBtn').addEventListener('click', function() {
+                showAddVehicleModal();
+            });
+
+            setupAdminFilters();
+        }
+
+        function initDriverPortal() {
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('driverAvatar').textContent = initials;
+            document.getElementById('driverName').textContent = currentUser.name;
+            document.getElementById('driverDetails').textContent = 
+                `${currentUser.car_type} • ${currentUser.plate_number} • ${currentUser.phone}`;
+            
+            setupTabs('driverPortal');
+            
+            loadDriverDashboard();
+            loadDriverBookings();
+            loadDriverEarnings();
+            loadDriverProfile();
+            
+            document.getElementById('driverLogoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+
+            setupDriverFilters();
+        }
+
+        function setupTabs(portal) {
+            const tabs = document.querySelectorAll(`#${portal} .nav-links a[data-tab]`);
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tabId = this.getAttribute('data-tab');
+                    document.querySelectorAll(`#${portal} .tab-content`).forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    if (portal === 'adminPortal') {
+                        switch(tabId) {
+                            case 'dashboard': loadAdminDashboard(); break;
+                            case 'bookings': loadAdminBookings(); break;
+                            case 'drivers': loadAdminDrivers(); break;
+                            case 'vehicles': loadAdminVehicles(); break;
+                            case 'accounts': loadAdminAccounts(); break;
+                        }
+                    } else {
+                        switch(tabId) {
+                            case 'driverDashboard': loadDriverDashboard(); break;
+                            case 'driverBookings': loadDriverBookings(); break;
+                            case 'driverEarnings': loadDriverEarnings(); break;
+                            case 'driverProfile': loadDriverProfile(); break;
+                        }
+                    }
+                });
+            });
+        }
+
+        function setupAdminFilters() {
+            document.getElementById('dashboardDateRange').addEventListener('change', function() {
+                const value = this.value;
+                if (value === 'custom') {
+                    document.getElementById('customDateRangeGroup').style.display = 'block';
+                    document.getElementById('customDateRangeGroup2').style.display = 'block';
+                } else {
+                    document.getElementById('customDateRangeGroup').style.display = 'none';
+                    document.getElementById('customDateRangeGroup2').style.display = 'none';
+                    loadAdminDashboard();
+                }
+            });
+
+            document.getElementById('dashboardStartDate').addEventListener('change', loadAdminDashboard);
+            document.getElementById('dashboardEndDate').addEventListener('change', loadAdminDashboard);
+
+            document.getElementById('bookingStatusFilter').addEventListener('change', loadAdminBookings);
+            document.getElementById('bookingDateFilter').addEventListener('change', loadAdminBookings);
+            document.getElementById('bookingSearch').addEventListener('input', loadAdminBookings);
+
+            document.getElementById('driverStatusFilter').addEventListener('change', loadAdminDrivers);
+            document.getElementById('driverSearch').addEventListener('input', loadAdminDrivers);
+
+            document.getElementById('vehicleStatusFilter').addEventListener('change', loadAdminVehicles);
+            document.getElementById('vehicleTypeFilter').addEventListener('change', loadAdminVehicles);
+
+            document.getElementById('accountStatusFilter').addEventListener('change', loadAdminAccounts);
+            document.getElementById('accountDateFilter').addEventListener('change', loadAdminAccounts);
+        }
+
+        function setupDriverFilters() {
+            document.getElementById('driverBookingStatusFilter').addEventListener('change', loadDriverBookings);
+            document.getElementById('driverBookingDateFilter').addEventListener('change', loadDriverBookings);
+
+            document.getElementById('driverEarningStatusFilter').addEventListener('change', loadDriverEarnings);
+            document.getElementById('driverEarningDateFilter').addEventListener('change', loadDriverEarnings);
+        }
+
+        function loadAdminDashboard() {
+            document.getElementById('totalBookings').textContent = db.bookings.length;
+            document.getElementById('activeDrivers').textContent = db.users.filter(u => u.role === 'driver' && u.status === 'active').length;
+            document.getElementById('availableVehicles').textContent = db.vehicles.filter(v => v.status === 'available').length;
+            
+            const todayRevenue = db.bookings
+                .filter(b => b.scheduled_date === getToday() && b.status === 'completed')
+                .reduce((sum, b) => sum + b.fare, 0);
+            document.getElementById('todaysRevenue').textContent = formatCurrency(todayRevenue);
+            
+            const recentBookingsTable = document.getElementById('recentBookingsTable');
+            recentBookingsTable.innerHTML = '';
+            
+            const recentBookings = [...db.bookings]
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 5);
+            
+            recentBookings.forEach(booking => {
+                const driver = booking.driver_id ? db.users.find(u => u.id === booking.driver_id) : null;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.booking_id}</td>
+                    <td>${booking.customer_name}</td>
+                    <td>${booking.from_location}</td>
+                    <td>${booking.to_location}</td>
+                    <td>${getStatusBadge(booking.status)}</td>
+                    <td>${formatCurrency(booking.fare)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-booking" data-id="${booking.id}">View</button>
+                    </td>
+                `;
+                recentBookingsTable.appendChild(row);
+            });
+            
+            document.querySelectorAll('.view-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    showBookingDetails(bookingId);
+                });
+            });
+        }
+
+        function loadAdminBookings() {
+            const allBookingsTable = document.getElementById('allBookingsTable');
+            allBookingsTable.innerHTML = '';
+            
+            let filteredBookings = [...db.bookings];
+            
+            const statusFilter = document.getElementById('bookingStatusFilter').value;
+            if (statusFilter) {
+                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+            }
+            
+            const dateFilter = document.getElementById('bookingDateFilter').value;
+            if (dateFilter === 'today') {
+                filteredBookings = filteredBookings.filter(b => b.scheduled_date === getToday());
+            } else if (dateFilter === 'week') {
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                
+                filteredBookings = filteredBookings.filter(b => {
+                    const bookingDate = new Date(b.scheduled_date);
+                    return bookingDate >= startOfWeek && bookingDate <= endOfWeek;
+                });
+            } else if (dateFilter === 'month') {
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                filteredBookings = filteredBookings.filter(b => {
+                    const bookingDate = new Date(b.scheduled_date);
+                    return bookingDate >= startOfMonth && bookingDate <= endOfMonth;
+                });
+            }
+            else if (dateFilter === 'custom') {
+                const startDate = document.getElementById('dashboardStartDate').value;
+                const endDate = document.getElementById('dashboardEndDate').value;
+                
+                if (startDate && endDate) {
+                    filteredBookings = filteredBookings.filter(b => {
+                        const bookingDate = new Date(b.scheduled_date);
+                        const start = new Date(startDate);
+                        const end = new Date(endDate);
+                        return bookingDate >= start && bookingDate <= end;
+                    });
+                }
+            }
+            
+            const searchTerm = document.getElementById('bookingSearch').value.toLowerCase();
+            if (searchTerm) {
+                filteredBookings = filteredBookings.filter(b => 
+                    b.customer_name.toLowerCase().includes(searchTerm) || 
+                    b.from_location.toLowerCase().includes(searchTerm) || 
+                    b.to_location.toLowerCase().includes(searchTerm) ||
+                    b.booking_id.toLowerCase().includes(searchTerm) ||
+                    (b.driver_id && db.users.find(u => u.id === b.driver_id)?.name.toLowerCase().includes(searchTerm)) ||
+                    (b.vehicle_id && db.vehicles.find(v => v.id === b.vehicle_id)?.plate.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            filteredBookings.forEach(booking => {
+                const driver = booking.driver_id ? db.users.find(u => u.id === booking.driver_id) : null;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.booking_id}</td>
+                    <td>${booking.customer_name}</td>
+                    <td>${booking.from_location}</td>
+                    <td>${booking.to_location}</td>
+                    <td>${driver ? driver.name : 'Not assigned'}</td>
+                    <td>${getStatusBadge(booking.status)}</td>
+                    <td>${formatCurrency(booking.fare)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-booking" data-id="${booking.id}">View</button>
+                        ${booking.status === 'pending' ? '<button class="btn btn-success btn-sm assign-booking" data-id="${booking.id}">Assign</button>' : ''}
+                    </td>
+                `;
+                allBookingsTable.appendChild(row);
+            });
+            
+            document.querySelectorAll('.view-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    showBookingDetails(bookingId);
+                });
+            });
+            
+            document.querySelectorAll('.assign-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    showAssignBookingModal(bookingId);
+                });
+            });
+        }
+
+        function loadAdminDrivers() {
+            const driversTable = document.getElementById('driversTable');
+            driversTable.innerHTML = '';
+            
+            const drivers = db.users.filter(u => u.role === 'driver');
+            
+            drivers.forEach(driver => {
+                const assignedVehicle = db.vehicles.find(v => v.driver_id === driver.id);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${driver.id}</td>
+                    <td>${driver.name}</td>
+                    <td>${driver.phone}</td>
+                    <td>${getStatusBadge(driver.status)}</td>
+                    <td>${assignedVehicle ? `${assignedVehicle.make} ${assignedVehicle.model} (${assignedVehicle.plate})` : 'None'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-driver" data-id="${driver.id}">View</button>
+                        ${driver.status === 'pending' ? `
+                            <button class="btn btn-success btn-sm approve-driver" data-id="${driver.id}">Approve</button>
+                            <button class="btn btn-danger btn-sm reject-driver" data-id="${driver.id}">Reject</button>
+                        ` : ''}
+                    </td>
+                `;
+                driversTable.appendChild(row);
+            });
+
+            document.querySelectorAll('.view-driver').forEach(button => {
+                button.addEventListener('click', function() {
+                    const driverId = parseInt(this.getAttribute('data-id'));
+                    showDriverDetails(driverId);
+                });
+            });
+            
+            document.querySelectorAll('.approve-driver').forEach(button => {
+                button.addEventListener('click', function() {
+                    const driverId = parseInt(this.getAttribute('data-id'));
+                    approveDriver(driverId);
+                });
+            });
+            
+            document.querySelectorAll('.reject-driver').forEach(button => {
+                button.addEventListener('click', function() {
+                    const driverId = parseInt(this.getAttribute('data-id'));
+                    rejectDriver(driverId);
+                });
+            });
+        }
+
+        function approveDriver(driverId) {
+            const driver = db.users.find(d => d.id === driverId);
+            if (driver) {
+                driver.status = 'active';
+                loadAdminDrivers();
+                alert('Driver approved successfully!');
+            }
+        }
+
+        function rejectDriver(driverId) {
+            if (confirm('Are you sure you want to reject this driver?')) {
+                db.users = db.users.filter(d => d.id !== driverId);
+                loadAdminDrivers();
+                alert('Driver rejected and removed from system.');
+            }
+        }
+
+        function loadAdminVehicles() {
+            const vehiclesTable = document.getElementById('vehiclesTable');
+            vehiclesTable.innerHTML = '';
+            
+            let filteredVehicles = [...db.vehicles];
+            
+            const statusFilter = document.getElementById('vehicleStatusFilter').value;
+            if (statusFilter) {
+                filteredVehicles = filteredVehicles.filter(v => {
+                    if (statusFilter === 'expired') {
+                        return new Date(v.reg_expiry) < new Date();
+                    }
+                    return v.status === statusFilter;
+                });
+            }
+            
+            const typeFilter = document.getElementById('vehicleTypeFilter').value;
+            if (typeFilter) {
+                filteredVehicles = filteredVehicles.filter(v => 
+                    v.type === typeFilter || 
+                    (typeFilter === '4_seater' && v.seats == 4) ||
+                    (typeFilter === '7_seater' && v.seats == 7)
+                );
+            }
+            
+            const searchTerm = document.getElementById('vehicleSearch').value.toLowerCase();
+            if (searchTerm) {
+                filteredVehicles = filteredVehicles.filter(v => 
+                    v.make.toLowerCase().includes(searchTerm) || 
+                    v.model.toLowerCase().includes(searchTerm) || 
+                    v.plate.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            filteredVehicles.forEach(vehicle => {
+                const driver = vehicle.driver_id ? db.users.find(u => u.id === vehicle.driver_id) : null;
+                const isExpired = new Date(vehicle.reg_expiry) < new Date();
+                const status = isExpired ? 'expired' : vehicle.status;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${vehicle.id}</td>
+                    <td>${vehicle.make}</td>
+                    <td>${vehicle.model}</td>
+                    <td>${vehicle.plate}</td>
+                    <td>${vehicle.type}</td>
+                    <td>${vehicle.seats} Seater</td>
+                    <td class="${isExpired ? 'text-danger' : ''}">
+                        ${new Date(vehicle.reg_expiry).toLocaleDateString()}
+                        ${isExpired ? ' (Expired)' : ''}
+                    </td>
+                    <td>${getStatusBadge(status)}</td>
+                    <td>${driver ? driver.name : 'None'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-vehicle" data-id="${vehicle.id}">View</button>
+                        <button class="btn btn-info btn-sm edit-vehicle" data-id="${vehicle.id}">Edit</button>
+                    </td>
+                `;
+                vehiclesTable.appendChild(row);
+            });
+
+            document.querySelectorAll('.view-vehicle').forEach(button => {
+                button.addEventListener('click', function() {
+                    const vehicleId = parseInt(this.getAttribute('data-id'));
+                    showVehicleDetails(vehicleId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-vehicle').forEach(button => {
+                button.addEventListener('click', function() {
+                    const vehicleId = parseInt(this.getAttribute('data-id'));
+                    showEditVehicleModal(vehicleId);
+                });
+            });
+        }
+
+        function showEditVehicleModal(vehicleId) {
+            const vehicle = db.vehicles.find(v => v.id === vehicleId);
+            if (!vehicle) return;
+            
+            const modal = document.getElementById('addVehicleModal');
+            const form = document.getElementById('addVehicleForm');
+            const driverSelect = document.getElementById('vehicleDriver');
+            
+            modal.querySelector('.modal-title').textContent = 'Edit Vehicle';
+            
+            document.getElementById('vehicleMake').value = vehicle.make;
+            document.getElementById('vehicleModel').value = vehicle.model;
+            document.getElementById('vehicleYear').value = vehicle.year;
+            document.getElementById('vehiclePlate').value = vehicle.plate;
+            document.getElementById('vehicleType').value = vehicle.type;
+            document.getElementById('vehicleSeats').value = vehicle.seats;
+            document.getElementById('vehicleRegExpiry').value = vehicle.reg_expiry;
+            document.getElementById('vehicleStatus').value = vehicle.status;
+            
+            driverSelect.innerHTML = '<option value="">None</option>';
+            db.users.filter(u => u.role === 'driver').forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = driver.name;
+                if (driver.id === vehicle.driver_id) {
+                    option.selected = true;
+                }
+                driverSelect.appendChild(option);
+            });
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                vehicle.make = document.getElementById('vehicleMake').value;
+                vehicle.model = document.getElementById('vehicleModel').value;
+                vehicle.year = parseInt(document.getElementById('vehicleYear').value);
+                vehicle.plate = document.getElementById('vehiclePlate').value;
+                vehicle.type = document.getElementById('vehicleType').value;
+                vehicle.seats = parseInt(document.getElementById('vehicleSeats').value);
+                vehicle.reg_expiry = document.getElementById('vehicleRegExpiry').value;
+                vehicle.status = document.getElementById('vehicleStatus').value;
+                vehicle.driver_id = document.getElementById('vehicleDriver').value || null;
+                
+                modal.style.display = 'none';
+                loadAdminVehicles();
+                
+                alert('Vehicle updated successfully!');
+            };
+        }
+
+        function loadAdminAccounts() {
+            const accountsTable = document.getElementById('accountsTable');
+            accountsTable.innerHTML = '';
+            
+            let filteredEarnings = [...db.earnings];
+            
+            const statusFilter = document.getElementById('accountStatusFilter').value;
+            if (statusFilter) {
+                filteredEarnings = filteredEarnings.filter(e => e.status === statusFilter);
+            }
+            
+            const dateFilter = document.getElementById('accountDateFilter').value;
+            if (dateFilter === 'today') {
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at).toISOString().split('T')[0];
+                    return earningDate === getToday();
+                });
+            } else if (dateFilter === 'week') {
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at);
+                    return earningDate >= startOfWeek && earningDate <= endOfWeek;
+                });
+            } else if (dateFilter === 'month') {
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at);
+                    return earningDate >= startOfMonth && earningDate <= endOfMonth;
+                });
+            }
+            
+            filteredEarnings.forEach(earning => {
+                const driver = db.users.find(u => u.id === earning.driver_id);
+                const booking = db.bookings.find(b => b.id === earning.booking_id);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${driver ? driver.name : 'Unknown'}</td>
+                    <td>${new Date(earning.created_at).toLocaleDateString()}</td>
+                    <td>${booking ? 1 : 0}</td>
+                    <td>${formatCurrency(earning.amount)}</td>
+                    <td>${formatCurrency(earning.commission)}</td>
+                    <td>${formatCurrency(earning.net_amount)}</td>
+                    <td>${getStatusBadge(earning.status)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-earning" data-id="${earning.id}">View</button>
+                    </td>
+                `;
+                accountsTable.appendChild(row);
+            });
+        }
+
+        function loadDriverDashboard() {
+            const driverBookings = db.bookings.filter(b => b.driver_id === currentUser.id);
+            const todayBookings = driverBookings.filter(b => b.scheduled_date === getToday());
+            
+            document.getElementById('todayBookings').textContent = todayBookings.length;
+            document.getElementById('completedBookings').textContent = todayBookings.filter(b => b.status === 'completed').length;
+            
+            const totalEarnings = driverBookings
+                .filter(b => b.status === 'completed')
+                .reduce((sum, b) => sum + (b.fare - b.commission), 0);
+            document.getElementById('totalEarnings').textContent = formatCurrency(totalEarnings);
+            
+            const totalCommission = driverBookings
+                .filter(b => b.status === 'completed')
+                .reduce((sum, b) => sum + b.commission, 0);
+            document.getElementById('totalCommission').textContent = formatCurrency(totalCommission);
+            
+            const upcomingBookings = todayBookings.filter(b => b.status === 'assigned');
+            const upcomingTable = document.getElementById('upcomingBookingsTable');
+            upcomingTable.innerHTML = '';
+            
+            upcomingBookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.booking_id}</td>
+                    <td>${booking.from_location}</td>
+                    <td>${booking.to_location}</td>
+                    <td>${booking.scheduled_time}</td>
+                    <td>${formatCurrency(booking.fare)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm pickup-booking" data-id="${booking.id}">Pickup</button>
+                    </td>
+                `;
+                upcomingTable.appendChild(row);
+            });
+            
+            const ongoingBooking = todayBookings.find(b => b.status === 'in_progress');
+            const ongoingTable = document.getElementById('ongoingBookingTable');
+            ongoingTable.innerHTML = '';
+            
+            if (ongoingBooking) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ongoingBooking.booking_id}</td>
+                    <td>${ongoingBooking.from_location}</td>
+                    <td>${ongoingBooking.to_location}</td>
+                    <td>${ongoingBooking.pickup_time ? new Date(ongoingBooking.pickup_time).toLocaleTimeString() : 'N/A'}</td>
+                    <td>N/A</td>
+                    <td>
+                        <button class="btn btn-success btn-sm complete-booking" data-id="${ongoingBooking.id}">Complete</button>
+                    </td>
+                `;
+                ongoingTable.appendChild(row);
+            }
+            
+            document.querySelectorAll('.pickup-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    updateBookingStatus(bookingId, 'in_progress', { pickup_time: new Date().toISOString() });
+                });
+            });
+            
+            document.querySelectorAll('.complete-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    completeBooking(bookingId);
+                });
+            });
+        }
+
+        function loadDriverBookings() {
+            const driverBookings = db.bookings.filter(b => b.driver_id === currentUser.id);
+            const bookingsTable = document.getElementById('driverBookingsTable');
+            bookingsTable.innerHTML = '';
+            
+            let filteredBookings = [...driverBookings];
+            
+            const statusFilter = document.getElementById('driverBookingStatusFilter').value;
+            if (statusFilter) {
+                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+            }
+            
+            const dateFilter = document.getElementById('driverBookingDateFilter').value;
+            if (dateFilter === 'today') {
+                filteredBookings = filteredBookings.filter(b => b.scheduled_date === getToday());
+            } else if (dateFilter === 'week') {
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                
+                filteredBookings = filteredBookings.filter(b => {
+                    const bookingDate = new Date(b.scheduled_date);
+                    return bookingDate >= startOfWeek && bookingDate <= endOfWeek;
+                });
+            } else if (dateFilter === 'month') {
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                filteredBookings = filteredBookings.filter(b => {
+                    const bookingDate = new Date(b.scheduled_date);
+                    return bookingDate >= startOfMonth && bookingDate <= endOfMonth;
+                });
+            }
+            
+            filteredBookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.booking_id}</td>
+                    <td>${booking.from_location}</td>
+                    <td>${booking.to_location}</td>
+                    <td>${booking.scheduled_date}</td>
+                    <td>${booking.scheduled_time}</td>
+                    <td>${getStatusBadge(booking.status)}</td>
+                    <td>
+                        ${booking.status === 'assigned' ? 
+                            '<button class="btn btn-primary btn-sm pickup-booking" data-id="' + booking.id + '">Pickup</button>' : ''}
+                        ${booking.status === 'in_progress' ? 
+                            '<button class="btn btn-success btn-sm complete-booking" data-id="' + booking.id + '">Complete</button>' : ''}
+                        <button class="btn btn-primary btn-sm view-driver-booking" data-id="${booking.id}">View</button>
+                    </td>
+                `;
+                bookingsTable.appendChild(row);
+            });
+
+            document.querySelectorAll('.pickup-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    updateBookingStatus(bookingId, 'in_progress', { pickup_time: new Date().toISOString() });
+                });
+            });
+            
+            document.querySelectorAll('.complete-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    completeBooking(bookingId);
+                });
+            });
+
+            document.querySelectorAll('.view-driver-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = parseInt(this.getAttribute('data-id'));
+                    showDriverBookingDetails(bookingId);
+                });
+            });
+        }
+
+        function loadDriverEarnings() {
+            const driverEarnings = db.earnings.filter(e => e.driver_id === currentUser.id);
+            const earningsTable = document.getElementById('driverEarningsTable');
+            earningsTable.innerHTML = '';
+            
+            let filteredEarnings = [...driverEarnings];
+            
+            const statusFilter = document.getElementById('driverEarningStatusFilter').value;
+            if (statusFilter) {
+                filteredEarnings = filteredEarnings.filter(e => e.status === statusFilter);
+            }
+            
+            const dateFilter = document.getElementById('driverEarningDateFilter').value;
+            if (dateFilter === 'today') {
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at).toISOString().split('T')[0];
+                    return earningDate === getToday();
+                });
+            } else if (dateFilter === 'week') {
+                const today = new Date();
+                const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at);
+                    return earningDate >= startOfWeek && earningDate <= endOfWeek;
+                });
+            } else if (dateFilter === 'month') {
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                filteredEarnings = filteredEarnings.filter(e => {
+                    const earningDate = new Date(e.created_at);
+                    return earningDate >= startOfMonth && earningDate <= endOfMonth;
+                });
+            }
+            
+            filteredEarnings.forEach(earning => {
+                const booking = db.bookings.find(b => b.id === earning.booking_id);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking ? booking.booking_id : 'N/A'}</td>
+                    <td>${new Date(earning.created_at).toLocaleDateString()}</td>
+                    <td>${formatCurrency(earning.amount)}</td>
+                    <td>${formatCurrency(earning.commission)}</td>
+                    <td>${formatCurrency(earning.net_amount)}</td>
+                    <td>${getStatusBadge(earning.status)}</td>
+                `;
+                earningsTable.appendChild(row);
+            });
+        }
+
+        function loadDriverProfile() {
+            document.getElementById('driverProfileName').value = currentUser.name;
+            document.getElementById('driverProfilePhone').value = currentUser.phone;
+            document.getElementById('driverProfilePlate').value = currentUser.plate_number;
+            
+            document.getElementById('driverProfileForm').onsubmit = function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('driverProfileCurrentPassword').value;
+                const newPassword = document.getElementById('driverProfileNewPassword').value;
+                const confirmPassword = document.getElementById('driverProfileConfirmPassword').value;
+                
+                if (currentPassword || newPassword || confirmPassword) {
+                    if (currentPassword !== currentUser.password) {
+                        alert('Current password is incorrect');
+                        return;
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        alert('New passwords do not match');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 6) {
+                        alert('Password must be at least 6 characters');
+                        return;
+                    }
+                    
+                    currentUser.password = newPassword;
+                }
+                
+                currentUser.name = document.getElementById('driverProfileName').value;
+                currentUser.phone = document.getElementById('driverProfilePhone').value;
+                currentUser.plate_number = document.getElementById('driverProfilePlate').value;
+                
+                const vehicle = db.vehicles.find(v => v.driver_id === currentUser.id);
+                if (vehicle) {
+                    vehicle.plate = currentUser.plate_number;
+                }
+                
+                alert('Profile updated successfully!');
+                loadDriverDashboard();
+                
+                document.getElementById('driverProfileCurrentPassword').value = '';
+                document.getElementById('driverProfileNewPassword').value = '';
+                document.getElementById('driverProfileConfirmPassword').value = '';
+            };
+        }
+
+        function showCreateBookingModal() {
+            const modal = document.getElementById('createBookingModal');
+            const form = document.getElementById('createBookingForm');
+            
+            form.reset();
+            document.getElementById('bookingDate').value = getToday();
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                if (new Date(`${document.getElementById('bookingDate').value}T${document.getElementById('bookingTime').value}`) < new Date()) {
+                    alert('Booking date/time cannot be in the past');
+                    return;
+                }
+
+                if (document.getElementById('bookingFrom').value === document.getElementById('bookingTo').value) {
+                    alert('Pickup and dropoff locations cannot be the same');
+                    return;
+                }
+
+                const fare = parseFloat(document.getElementById('bookingFare').value);
+                if (isNaN(fare) || fare < 10) {
+                    alert('Fare must be at least 10 SAR');
+                    return;
+                }
+
+                const newBooking = {
+                    id: db.bookings.length + 1,
+                    booking_id: 'BK' + String(db.bookings.length + 1).padStart(4, '0'),
+                    customer_name: document.getElementById('bookingCustomerName').value,
+                    customer_phone: document.getElementById('bookingCustomerPhone').value,
+                    from_location: document.getElementById('bookingFrom').value,
+                    to_location: document.getElementById('bookingTo').value,
+                    scheduled_date: document.getElementById('bookingDate').value,
+                    scheduled_time: document.getElementById('bookingTime').value,
+                    car_type: document.getElementById('bookingCarType').value,
+                    fare: fare,
+                    commission: parseFloat(document.getElementById('bookingCommission').value),
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                };
+                
+                db.bookings.push(newBooking);
+                modal.style.display = 'none';
+                loadAdminBookings();
+                loadAdminDashboard();
+                
+                alert('Booking created successfully!');
+            };
+        }
+
+        function showAddDriverModal() {
+            const modal = document.getElementById('addDriverModal');
+            const form = document.getElementById('addDriverForm');
+            
+            form.reset();
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const newDriver = {
+                    id: db.users.length + 1,
+                    username: document.getElementById('driverUsername').value,
+                    password: document.getElementById('driverPassword').value,
+                    role: 'driver',
+                    name: document.getElementById('driverName').value,
+                    phone: document.getElementById('driverPhone').value,
+                    email: document.getElementById('driverEmail').value,
+                    status: document.getElementById('driverStatus').value,
+                    plate_number: document.getElementById('driverPlate').value,
+                    car_type: document.getElementById('driverCarType').value
+                };
+                
+                db.users.push(newDriver);
+                modal.style.display = 'none';
+                loadAdminDrivers();
+                
+                alert('Driver added successfully!');
+            };
+        }
+
+        function showDriverDetails(driverId) {
+            const driver = db.users.find(d => d.id === driverId);
+            if (!driver) return;
+            
+            const modal = document.getElementById('viewDriverModal');
+            const content = document.getElementById('viewDriverContent');
+            
+            const assignedVehicle = db.vehicles.find(v => v.driver_id === driver.id);
+            const driverBookings = db.bookings.filter(b => b.driver_id === driver.id);
+            const completedBookings = driverBookings.filter(b => b.status === 'completed').length;
+            const totalEarnings = driverBookings
+                .filter(b => b.status === 'completed')
+                .reduce((sum, b) => sum + (b.fare - b.commission), 0);
+            
+            content.innerHTML = `
+                <h4>${driver.name}</h4>
+                <p><strong>Username:</strong> ${driver.username}</p>
+                <p><strong>Email:</strong> ${driver.email}</p>
+                <p><strong>Phone:</strong> ${driver.phone}</p>
+                <p><strong>Status:</strong> ${getStatusBadge(driver.status)}</p>
+                <p><strong>Plate Number:</strong> ${driver.plate_number}</p>
+                <p><strong>Car Type:</strong> ${driver.car_type}</p>
+                ${assignedVehicle ? `<p><strong>Assigned Vehicle:</strong> ${assignedVehicle.make} ${assignedVehicle.model} (${assignedVehicle.plate})</p>` : ''}
+                <p><strong>Completed Rides:</strong> ${completedBookings}</p>
+                <p><strong>Total Earnings:</strong> ${formatCurrency(totalEarnings)}</p>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+
+        function showAddVehicleModal() {
+            const modal = document.getElementById('addVehicleModal');
+            const form = document.getElementById('addVehicleForm');
+            const driverSelect = document.getElementById('vehicleDriver');
+            
+            form.reset();
+            
+            driverSelect.innerHTML = '<option value="">None</option>';
+            db.users.filter(u => u.role === 'driver' && !db.vehicles.some(v => v.driver_id === u.id)).forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = driver.name;
+                driverSelect.appendChild(option);
+            });
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const newVehicle = {
+                    id: db.vehicles.length + 1,
+                    make: document.getElementById('vehicleMake').value,
+                    model: document.getElementById('vehicleModel').value,
+                    year: parseInt(document.getElementById('vehicleYear').value),
+                    plate: document.getElementById('vehiclePlate').value,
+                    type: document.getElementById('vehicleType').value,
+                    seats: parseInt(document.getElementById('vehicleSeats').value),
+                    reg_expiry: document.getElementById('vehicleRegExpiry').value,
+                    status: document.getElementById('vehicleStatus').value,
+                    driver_id: document.getElementById('vehicleDriver').value || null
+                };
+                
+                db.vehicles.push(newVehicle);
+                document.getElementById('addVehicleModal').style.display = 'none';
+                loadAdminVehicles();
+                
+                alert('Vehicle added successfully!');
+            };
+        }
+
+        function showVehicleDetails(vehicleId) {
+            const vehicle = db.vehicles.find(v => v.id === vehicleId);
+            if (!vehicle) return;
+            
+            const modal = document.getElementById('viewVehicleModal');
+            const content = document.getElementById('viewVehicleContent');
+            
+            const driver = vehicle.driver_id ? db.users.find(u => u.id === vehicle.driver_id) : null;
+            const vehicleBookings = db.bookings.filter(b => b.vehicle_id === vehicle.id);
+            const completedBookings = vehicleBookings.filter(b => b.status === 'completed').length;
+            const isExpired = new Date(vehicle.reg_expiry) < new Date();
+            
+            content.innerHTML = `
+                <h4>${vehicle.make} ${vehicle.model} (${vehicle.year})</h4>
+                <p><strong>Plate Number:</strong> ${vehicle.plate}</p>
+                <p><strong>Type:</strong> ${vehicle.type}</p>
+                <p><strong>Seating Capacity:</strong> ${vehicle.seats} Seater</p>
+                <p><strong>Registration Expiry:</strong> 
+                    <span class="${isExpired ? 'text-danger' : ''}">
+                        ${new Date(vehicle.reg_expiry).toLocaleDateString()}
+                        ${isExpired ? ' (Expired)' : ''}
+                    </span>
+                </p>
+                <p><strong>Status:</strong> ${getStatusBadge(isExpired ? 'expired' : vehicle.status)}</p>
+                ${driver ? `<p><strong>Assigned Driver:</strong> ${driver.name} (${driver.phone})</p>` : '<p><strong>Assigned Driver:</strong> None</p>'}
+                <p><strong>Completed Rides:</strong> ${completedBookings}</p>
+                <div class="text-right mt-3">
+                    <button class="btn btn-info edit-vehicle-details" data-id="${vehicle.id}">Edit Details</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            document.querySelector('.edit-vehicle-details').addEventListener('click', function() {
+                modal.style.display = 'none';
+                const vehicleId = parseInt(this.getAttribute('data-id'));
+                showEditVehicleModal(vehicleId);
+            });
+        }
+
+        function showAssignBookingModal(bookingId) {
+            const booking = db.bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            const modal = document.getElementById('assignBookingModal');
+            const driverSelect = document.getElementById('assignDriver');
+            const vehicleSelect = document.getElementById('assignVehicle');
+            
+            driverSelect.innerHTML = '';
+            vehicleSelect.innerHTML = '';
+            
+            const availableDrivers = db.users.filter(u => 
+                u.role === 'driver' && 
+                u.status === 'active'
+            );
+            
+            if (availableDrivers.length === 0) {
+                alert('No available drivers at the moment');
+                return;
+            }
+            
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select Driver';
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            driverSelect.appendChild(defaultOption);
+            
+            availableDrivers.forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = `${driver.name} (${driver.plate_number})`;
+                driverSelect.appendChild(option);
+            });
+            
+            driverSelect.addEventListener('change', function() {
+                const driverId = parseInt(this.value);
+                vehicleSelect.innerHTML = '';
+                
+                const defaultVehicleOption = document.createElement('option');
+                defaultVehicleOption.value = '';
+                defaultVehicleOption.textContent = 'Select Vehicle';
+                defaultVehicleOption.selected = true;
+                defaultVehicleOption.disabled = true;
+                vehicleSelect.appendChild(defaultVehicleOption);
+                
+                if (driverId) {
+                    const assignedVehicle = db.vehicles.find(v => v.driver_id === driverId && v.status === 'available');
+                    if (assignedVehicle) {
+                        const option = document.createElement('option');
+                        option.value = assignedVehicle.id;
+                        option.textContent = `${assignedVehicle.make} ${assignedVehicle.model} (${assignedVehicle.plate}) - Driver's assigned vehicle`;
+                        vehicleSelect.appendChild(option);
+                    }
+                    
+                    db.vehicles.filter(v => 
+                        v.status === 'available' && 
+                        (!v.driver_id || v.driver_id === driverId) &&
+                        v.id !== (assignedVehicle ? assignedVehicle.id : null)
+                    ).forEach(vehicle => {
+                        const option = document.createElement('option');
+                        option.value = vehicle.id;
+                        option.textContent = `${vehicle.make} ${vehicle.model} (${vehicle.plate})`;
+                        vehicleSelect.appendChild(option);
+                    });
+                }
+            });
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            document.getElementById('confirmAssignBtn').onclick = function() {
+                const driverId = parseInt(driverSelect.value);
+                const vehicleId = parseInt(vehicleSelect.value);
+                
+                if (!driverId) {
+                    alert('Please select a driver');
+                    return;
+                }
+                
+                if (!vehicleId) {
+                    alert('Please select a vehicle');
+                    return;
+                }
+                
+                booking.driver_id = driverId;
+                booking.vehicle_id = vehicleId;
+                booking.status = 'assigned';
+                
+                const vehicle = db.vehicles.find(v => v.id === vehicleId);
+                if (vehicle) {
+                    vehicle.status = 'in_use';
+                    vehicle.driver_id = driverId;
+                }
+                
+                modal.style.display = 'none';
+                loadAdminBookings();
+                loadAdminDashboard();
+                
+                alert('Booking assigned successfully!');
+            };
+        }
+
+        function showAdminProfile() {
+            const modal = document.getElementById('adminProfileModal');
+            const form = document.getElementById('adminProfileForm');
+            
+            document.getElementById('adminProfileName').value = currentUser.name;
+            document.getElementById('adminProfileEmail').value = currentUser.email;
+            document.getElementById('adminProfilePhone').value = currentUser.phone;
+            document.getElementById('adminProfileUsername').value = currentUser.username;
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('adminProfileCurrentPassword').value;
+                const newPassword = document.getElementById('adminProfileNewPassword').value;
+                const confirmPassword = document.getElementById('adminProfileConfirmPassword').value;
+                
+                if (currentPassword || newPassword || confirmPassword) {
+                    if (currentPassword !== currentUser.password) {
+                        alert('Current password is incorrect');
+                        return;
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        alert('New passwords do not match');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 6) {
+                        alert('Password must be at least 6 characters');
+                        return;
+                    }
+                    
+                    currentUser.password = newPassword;
+                }
+                
+                currentUser.name = document.getElementById('adminProfileName').value;
+                currentUser.email = document.getElementById('adminProfileEmail').value;
+                currentUser.phone = document.getElementById('adminProfilePhone').value;
+                
+                document.getElementById('adminName').textContent = currentUser.name;
+                document.getElementById('profileInitial').textContent = currentUser.name.charAt(0);
+                
+                modal.style.display = 'none';
+                alert('Profile updated successfully!');
+                
+                document.getElementById('adminProfileCurrentPassword').value = '';
+                document.getElementById('adminProfileNewPassword').value = '';
+                document.getElementById('adminProfileConfirmPassword').value = '';
+            };
+        }
+
+        function showDriverBookingDetails(bookingId) {
+            const booking = db.bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            const modal = document.getElementById('driverBookingDetailsModal');
+            const content = document.getElementById('driverBookingDetailsContent');
+            
+            const vehicle = booking.vehicle_id ? db.vehicles.find(v => v.id === booking.vehicle_id) : null;
+            
+            content.innerHTML = `
+                <h4>Booking #${booking.booking_id}</h4>
+                <p><strong>Customer:</strong> ${booking.customer_name} (${booking.customer_phone})</p>
+                <p><strong>From:</strong> ${booking.from_location}</p>
+                <p><strong>To:</strong> ${booking.to_location}</p>
+                <p><strong>Date & Time:</strong> ${booking.scheduled_date} at ${booking.scheduled_time}</p>
+                <p><strong>Status:</strong> ${getStatusBadge(booking.status)}</p>
+                <p><strong>Fare:</strong> ${formatCurrency(booking.fare)}</p>
+                <p><strong>Commission:</strong> ${formatCurrency(booking.commission)}</p>
+                <p><strong>Your Earnings:</strong> ${formatCurrency(booking.fare - booking.commission)}</p>
+                ${vehicle ? `<p><strong>Vehicle:</strong> ${vehicle.make} ${vehicle.model} (${vehicle.plate})</p>` : ''}
+                ${booking.pickup_time ? `<p><strong>Pickup Time:</strong> ${new Date(booking.pickup_time).toLocaleTimeString()}</p>` : ''}
+                ${booking.drop_time ? `<p><strong>Drop Time:</strong> ${new Date(booking.drop_time).toLocaleTimeString()}</p>` : ''}
+            `;
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+
+        function showBookingDetails(bookingId) {
+            const booking = db.bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            const driver = booking.driver_id ? db.users.find(u => u.id === booking.driver_id) : null;
+            const vehicle = booking.vehicle_id ? db.vehicles.find(v => v.id === booking.vehicle_id) : null;
+            
+            const modal = document.getElementById('bookingDetailsModal');
+            const content = document.getElementById('bookingDetailsContent');
+            
+            content.innerHTML = `
+                <h4>Booking #${booking.booking_id}</h4>
+                <p><strong>Customer:</strong> ${booking.customer_name} (${booking.customer_phone})</p>
+                <p><strong>From:</strong> ${booking.from_location}</p>
+                <p><strong>To:</strong> ${booking.to_location}</p>
+                <p><strong>Date & Time:</strong> ${booking.scheduled_date} at ${booking.scheduled_time}</p>
+                <p><strong>Status:</strong> ${getStatusBadge(booking.status)}</p>
+                <p><strong>Fare:</strong> ${formatCurrency(booking.fare)}</p>
+                <p><strong>Commission:</strong> ${formatCurrency(booking.commission)}</p>
+                ${driver ? `<p><strong>Driver:</strong> ${driver.name} (${driver.phone})</p>` : ''}
+                ${vehicle ? `<p><strong>Vehicle:</strong> ${vehicle.make} ${vehicle.model} (${vehicle.plate})</p>` : ''}
+                ${booking.pickup_time ? `<p><strong>Pickup Time:</strong> ${new Date(booking.pickup_time).toLocaleTimeString()}</p>` : ''}
+                ${booking.drop_time ? `<p><strong>Drop Time:</strong> ${new Date(booking.drop_time).toLocaleTimeString()}</p>` : ''}
+            `;
+            
+            modal.style.display = 'flex';
+            
+            modal.querySelector('.close').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+
+        function updateBookingStatus(bookingId, status, additionalData = {}) {
+            const booking = db.bookings.find(b => b.id === bookingId);
+            if (!booking) {
+                alert('Booking not found');
+                return;
+            }
+            
+            const validTransitions = {
+                'pending': ['assigned', 'cancelled'],
+                'assigned': ['in_progress', 'cancelled'],
+                'in_progress': ['completed', 'cancelled'],
+                'completed': [],
+                'cancelled': []
+            };
+            
+            if (!validTransitions[booking.status].includes(status)) {
+                alert(`Cannot change status from ${booking.status} to ${status}`);
+                return;
+            }
+            
+            booking.status = status;
+            Object.assign(booking, additionalData);
+            
+            if (status === 'cancelled') {
+                if (booking.driver_id && booking.vehicle_id) {
+                    const vehicle = db.vehicles.find(v => v.id === booking.vehicle_id);
+                    if (vehicle) vehicle.status = 'available';
+                }
+            }
+            
+            alert(`Booking status updated to ${status.replace('_', ' ')}`);
+            refreshBookingViews();
+        }
+
+        function refreshBookingViews() {
+            if (document.getElementById('adminPortal').style.display === 'block') {
+                loadAdminDashboard();
+                loadAdminBookings();
+            }
+            
+            if (document.getElementById('driverPortal').style.display === 'block') {
+                loadDriverDashboard();
+                loadDriverBookings();
+            }
+        }
+
+        function completeBooking(bookingId) {
+            const booking = db.bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            if (booking.status !== 'in_progress') {
+                alert('Only bookings in progress can be completed');
+                return;
+            }
+            
+            booking.status = 'completed';
+            booking.drop_time = new Date().toISOString();
+            
+            const vehicle = db.vehicles.find(v => v.id === booking.vehicle_id);
+            if (vehicle) {
+                vehicle.status = 'available';
+            }
+            
+            if (!db.earnings.some(e => e.booking_id === bookingId)) {
+                db.earnings.push({
+                    id: db.earnings.length + 1,
+                    driver_id: booking.driver_id,
+                    booking_id: bookingId,
+                    amount: booking.fare,
+                    commission: booking.commission,
+                    net_amount: booking.fare - booking.commission,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                });
+            }
+            
+            alert('Ride completed successfully!');
+            
+            if (document.getElementById('adminPortal').style.display === 'block') {
+                loadAdminDashboard();
+                loadAdminBookings();
+                loadAdminAccounts();
+            }
+            
+            if (document.getElementById('driverPortal').style.display === 'block') {
+                loadDriverDashboard();
+                loadDriverBookings();
+                loadDriverEarnings();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('adminPortal').style.display = 'none';
+            document.getElementById('driverPortal').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
