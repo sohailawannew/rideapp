@@ -8,7 +8,7 @@ const ASSETS = [
   '/rideapp/offline.html',
 
   // Essential Assets (Update these paths!)
-  '/rideapp/icon-512x512.png',
+  '/rideapp/icon.png',
   '/rideapp/icon-192x192.png',
   '/rideapp/css/main.min.css',
   '/rideapp/js/main.min.js',
