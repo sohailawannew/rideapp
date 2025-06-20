@@ -9,7 +9,7 @@ const ASSETS = [
   
   // Icons
   '/rideapp/icon.png',
-  '/rideapp/icon-192x192.png',
+  '/rideapp/icon2-192x192.png',
   
   // Add your other assets below:
   '/rideapp/css/styles.css',
@@ -68,7 +68,7 @@ self.addEventListener('push', (event) => {
   const payload = event.data?.json() || {
     title: 'New Ride Available',
     body: 'Tap to view details',
-    icon: '/rideapp/icon-192x192.png',
+    icon: '/rideapp/icon2-192x192.png',
     data: { url: '/rideapp/' }
   };
 
@@ -76,7 +76,7 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(payload.title, {
       body: payload.body,
       icon: payload.icon,
-      badge: '/rideapp/icon-192x192.png',
+      badge: '/rideapp/icon2-192x192.png',
       actions: [
         { action: 'view', title: 'View' },
         { action: 'dismiss', title: 'Dismiss' }
