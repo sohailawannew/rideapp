@@ -1,13 +1,13 @@
-{
-  "name": "RideApp",
-  "short_name": "Rides",
-  "start_url": "/rideapp/index.html",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "display": "standalone"
-}
+// Nuclear Option Service Worker - Guaranteed Registration
+self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Force immediate activation
+});
+
+self.addEventListener('activate', (e) => {
+  self.clients.claim(); // Take control immediately
+});
+
+self.addEventListener('fetch', (e) => {
+  // Bare minimum fetch handler
+  e.respondWith(fetch(e.request));
+});
