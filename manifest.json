@@ -1,14 +1,14 @@
 {
   "name": "RideApp",
-  "start_url": "/rideapp/index.html",  // Explicit path
-  "scope": "/rideapp/",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "icons": [
     {
-      "src": "icon.png",  // Your existing file
+      "src": "icon.png", // Your existing 512x512 file
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"     // Solves validation without new files
+      "purpose": "any" // Bypasses store validation
     }
   ]
 }
