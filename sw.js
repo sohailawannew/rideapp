@@ -1,13 +1,19 @@
-// Ultra-simple service worker
-const CACHE_NAME = 'rideapp-emergency-fix';
+// Minimal Service Worker - Forces immediate registration
+const CACHE_NAME = 'rideapp-simple';
 
-self.addEventListener('install', () => self.skipWaiting());
+// INSTALL - Just claim control
+self.addEventListener('install', (e) => {
+  e.waitUntil(self.skipWaiting()); // Activate immediately
+});
 
-self.addEventListener('activate', () => self.clients.claim());
+// ACTIVATE - Take over all tabs
+self.addEventListener('activate', (e) => {
+  e.waitUntil(self.clients.claim()); 
+});
 
+// FETCH - Basic offline fallback
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    fetch(e.request)
-      .catch(() => caches.match('/rideapp/index.html'))
+    fetch(e.request).catch(() => caches.match('/index.html'))
   );
 });
