@@ -1,15 +1,13 @@
 {
-  "name": "Online Ride Services",
-  "short_name": "Ride",  // <-- Critical addition (3+ chars)
-  "description": "Book rides instantly",  // <-- Add description
+  "name": "RideApp",
+  "short_name": "Rides",
   "start_url": "/rideapp/index.html",
-  "scope": "/rideapp/",
-  "display": "standalone",
   "icons": [
     {
       "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "display": "standalone"
 }
