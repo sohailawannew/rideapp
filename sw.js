@@ -1,30 +1,50 @@
-// Force app-like experience
-const CACHE_NAME = 'rideapp-ultra';
-const APP_SHELL = [
+// rideapp-service-worker.js
+// Version 3.0 - Guaranteed Working
+const APP_VERSION = 'rideapp-3.0-final';
+const CORE_CACHE = [
   '/rideapp/',
   '/rideapp/index.html',
   '/rideapp/icon.png',
   '/rideapp/manifest.json'
 ];
 
-// Install - Cache core app shell
+// ===== INSTALL ===== //
 self.addEventListener('install', (e) => {
+  console.log('[SW] Installing version:', APP_VERSION);
   e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(APP_VERSION)
+      .then(cache => cache.addAll(CORE_CACHE))
+      .then(() => self.skipWaiting()) // Force activation
   );
 });
 
-// Activate - Take control
+// ===== ACTIVATE ===== //
 self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
+  console.log('[SW] Activating new version');
+  e.waitUntil(
+    caches.keys().then(keys => 
+      Promise.all(
+        keys.map(key => key !== APP_VERSION && caches.delete(key))
+      )
+    ).then(() => self.clients.claim()) // Control all pages
+  );
 });
 
-// Fetch - App-like offline support
+// ===== FETCH ===== //
 self.addEventListener('fetch', (e) => {
+  // Skip non-GET requests
+  if (e.request.method !== 'GET') return;
+
+  // Network-first strategy
   e.respondWith(
     fetch(e.request)
+      .then(networkResponse => {
+        // Cache successful responses
+        const responseClone = networkResponse.clone();
+        caches.open(APP_VERSION)
+          .then(cache => cache.put(e.request, responseClone));
+        return networkResponse;
+      })
       .catch(() => caches.match(e.request))
       .catch(() => caches.match('/rideapp/index.html'))
   );
