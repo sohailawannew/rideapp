@@ -1,13 +1,31 @@
-// Nuclear Option Service Worker - Guaranteed Registration
+// Force app-like experience
+const CACHE_NAME = 'rideapp-ultra';
+const APP_SHELL = [
+  '/rideapp/',
+  '/rideapp/index.html',
+  '/rideapp/icon.png',
+  '/rideapp/manifest.json'
+];
+
+// Install - Cache core app shell
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Force immediate activation
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
+// Activate - Take control
 self.addEventListener('activate', (e) => {
-  self.clients.claim(); // Take control immediately
+  e.waitUntil(self.clients.claim());
 });
 
+// Fetch - App-like offline support
 self.addEventListener('fetch', (e) => {
-  // Bare minimum fetch handler
-  e.respondWith(fetch(e.request));
+  e.respondWith(
+    fetch(e.request)
+      .catch(() => caches.match(e.request))
+      .catch(() => caches.match('/rideapp/index.html'))
+  );
 });
