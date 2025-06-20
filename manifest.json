@@ -1,19 +1,14 @@
 {
-  "name": "RideApp",
+  "name": "Ride",
   "short_name": "Ride",
-  "description": "Instant ride booking",
   "start_url": "/rideapp/index.html",
-  "scope": "/rideapp/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "192x192 512x512",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any maskable"  // ← The magic line
     }
   ]
 }
