@@ -2,13 +2,16 @@
   "name": "Ride",
   "short_name": "Ride",
   "start_url": "/rideapp/index.html",
+  "scope": "/rideapp/",
   "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"  // ← The magic line
+      "purpose": "any maskable"
     }
   ]
 }
