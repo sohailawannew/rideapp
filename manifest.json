@@ -12,13 +12,13 @@
       "src": "/rideapp/icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"  // Works for both regular and adaptive icons
     },
     {
-      "src": "/rideapp/icon2-192x192.png",
+      "src": "/rideapp/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"  // Single icon serves all purposes
     }
   ]
 }
