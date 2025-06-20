@@ -1,13 +1,19 @@
 {
   "name": "RideApp",
-  "short_name": "Rides",
+  "short_name": "Ride",
+  "description": "Instant ride booking",
   "start_url": "/rideapp/index.html",
+  "scope": "/rideapp/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ],
-  "display": "standalone"
+  ]
 }
